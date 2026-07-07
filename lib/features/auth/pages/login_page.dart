@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:ticket_kcc/features/auth/pages/signup_page.dart';
+import 'package:loader_overlay/loader_overlay.dart';
+import 'package:ticket_kcc/providers/auth_provider.dart';
 
 // --- CONSTANT COLORS ---
 const Color kPrimaryColor = Color(0xFF500088); // Warna Ungu Tombol/Header
@@ -10,8 +13,7 @@ const Color kErrorColor = Color(0xFFFF5252); // Warna Merah Forgot Password
 // 1. LOGIN PAGE
 // ==========================================
 class LoginPage extends StatefulWidget {
-  final void Function(bool value) setIsLogin;
-  const LoginPage({super.key, required this.setIsLogin});
+  const LoginPage({super.key});
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -20,6 +22,9 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   bool _isObscure = true;
   bool _rememberMe = false;
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +39,7 @@ class _LoginPageState extends State<LoginPage> {
             const SizedBox(height: 20),
             // --- Header ---
             const Text(
-              "Hi, Welcome Back! 👋",
+              "Hi, Selamat Datang! 👋",
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -50,20 +55,32 @@ class _LoginPageState extends State<LoginPage> {
 
             // --- Form ---
             const CustomLabel(text: "Email"),
-            const CustomTextField(hintText: "sophat.leat@nintrea.live"),
+            Form(
+              key: formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CustomTextField(
+                    hintText: "johndoe@gmail.com",
+                    controller: _emailController,
+                  ),
 
-            const SizedBox(height: 20),
+                  const SizedBox(height: 20),
 
-            const CustomLabel(text: "Password"),
-            CustomTextField(
-              hintText: "Please Enter Your Password",
-              isPassword: true,
-              isObscure: _isObscure,
-              onVisibilityToggle: () {
-                setState(() {
-                  _isObscure = !_isObscure;
-                });
-              },
+                  const CustomLabel(text: "Password"),
+                  CustomTextField(
+                    controller: _passwordController,
+                    hintText: "******",
+                    isPassword: true,
+                    isObscure: _isObscure,
+                    onVisibilityToggle: () {
+                      setState(() {
+                        _isObscure = !_isObscure;
+                      });
+                    },
+                  ),
+                ],
+              ),
             ),
 
             // --- Remember Me & Forgot Password ---
@@ -81,12 +98,12 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 const SizedBox(width: 8),
                 const Text(
-                  "Remember Me",
+                  "Ingat saya",
                   style: TextStyle(fontWeight: FontWeight.w500),
                 ),
                 const Spacer(),
                 const Text(
-                  "Forgot Password",
+                  "Lupa Password",
                   style: TextStyle(
                     color: kErrorColor,
                     fontWeight: FontWeight.w600,
@@ -108,7 +125,39 @@ class _LoginPageState extends State<LoginPage> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                onPressed: () {},
+                onPressed: () async {
+                  print('login');
+                  if (formKey.currentState!.validate()) {
+                    context.loaderOverlay.show();
+
+                    final bool success = await context
+                        .read<AuthProvider>()
+                        .fetchLogin(
+                          _emailController.text,
+                          _passwordController.text,
+                        );
+
+                    if (!success) {
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Email atau password salah')),
+                        );
+                        if (context.loaderOverlay.visible) {
+                          context.loaderOverlay.hide();
+                        }
+                      }
+                    } else {
+                      if (context.mounted) {
+                        if (context.loaderOverlay.visible) {
+                          context.loaderOverlay.hide();
+                        }
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text("Login berhasil")),
+                        );
+                      }
+                    }
+                  }
+                },
                 child: const Text(
                   "Login",
                   style: TextStyle(
@@ -188,7 +237,7 @@ class _LoginPageState extends State<LoginPage> {
             SizedBox(height: 15),
             GestureDetector(
               onTap: () {
-                widget.setIsLogin(true);
+                context.read<AuthProvider>().setUserGuest();
               },
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -239,21 +288,39 @@ class CustomTextField extends StatelessWidget {
   final String hintText;
   final bool isPassword;
   final bool isObscure;
+  final bool isPhone;
   final VoidCallback? onVisibilityToggle;
   final String? prefixText;
+  final TextEditingController? controller;
 
   const CustomTextField({
     super.key,
     required this.hintText,
     this.isPassword = false,
     this.isObscure = false,
+    this.isPhone = false,
     this.onVisibilityToggle,
     this.prefixText,
+    required this.controller,
   });
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
+    return TextFormField(
+      validator: (value) {
+        if (value == null || value.isEmpty && !isPhone) {
+          return '${isPassword ? 'Password' : 'Email'} Harus Diisi';
+        }
+        if (!isPassword) {
+          if (!value.contains('@') && !isPhone) {
+            return 'Email Tidak Valid';
+          }
+        }
+        return null;
+      },
+      keyboardType: isPhone ? TextInputType.phone : TextInputType.text,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      controller: controller,
       obscureText: isPassword ? isObscure : false,
       decoration: InputDecoration(
         hintText: hintText,

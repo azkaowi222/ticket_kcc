@@ -7,7 +7,7 @@ class OrderHistoryPages extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsetsGeometry.all(8),
+      padding: EdgeInsets.all(8),
       child: Column(
         children: [
           Container(

@@ -17,6 +17,6 @@ class NavigationProvider extends ChangeNotifier {
 
   void goToHome() {
     _currentIndex = 0;
-    notifyListeners();
+    // notifyListeners();
   }
 }

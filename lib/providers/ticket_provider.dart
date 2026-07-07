@@ -26,7 +26,6 @@ class TicketProvider extends ChangeNotifier {
       firstDate: DateTime.now(),
       lastDate: DateTime(2030),
     );
-    print('Fungsi pickDate berjalan...');
 
     if (date != null) {
       dayName = getDayName(date);

@@ -15,7 +15,10 @@ class _TicketPageState extends State<TicketPage> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final TextEditingController nameController = TextEditingController();
   final TextEditingController dateController = TextEditingController();
-  final List<Tab> tabs = [Tab(text: 'Informasi'), Tab(text: 'Konfirmasi')];
+  final List<Tab> tabs = [
+    Tab(text: 'Informasi Kunjungan'),
+    Tab(text: 'Konfirmasi'),
+  ];
   bool _isFormFilled = false;
 
   void setFormFilled(bool value) {
