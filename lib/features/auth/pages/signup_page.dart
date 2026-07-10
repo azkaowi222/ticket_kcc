@@ -19,7 +19,7 @@ class SignUpPage extends StatefulWidget {
 
 class _SignUpPageState extends State<SignUpPage> {
   bool _isObscure = true;
-  bool _rememberMe = false;
+  final bool _rememberMe = false;
   final GlobalKey<FormState> formkey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();

@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 import 'package:provider/provider.dart';
+import 'package:qr_flutter/qr_flutter.dart';
+import 'package:ticket_kcc/models/order_model.dart';
+import 'package:ticket_kcc/models/user_model.dart';
+import 'package:ticket_kcc/providers/auth_provider.dart';
 import 'package:ticket_kcc/providers/navigation_provider.dart';
+import 'package:ticket_kcc/providers/order_provider.dart';
 import 'package:ticket_kcc/providers/ticket_provider.dart';
 
 class TicketPage extends StatefulWidget {
@@ -25,113 +32,120 @@ class _TicketPageState extends State<TicketPage> {
     _isFormFilled = value;
   }
 
+  final Widget spinkit = SpinKitThreeInOut(color: Colors.white, size: 25);
+
   @override
   Widget build(BuildContext context) {
     final TicketProvider ticketProvider = context.watch<TicketProvider>();
     final double deviceWidth = MediaQuery.of(context).size.width;
-    return Scaffold(
-      appBar: AppBar(
-        iconTheme: const IconThemeData(color: Colors.white),
-        backgroundColor: Color.fromARGB(255, 39, 54, 211),
-        title: Text('Beli Tiket', style: TextStyle(color: Colors.white)),
-        titleSpacing: 0,
-        titleTextStyle: TextStyle(fontSize: 18, color: Colors.black),
-        leading: BackButton(
-          onPressed: () {
-            Navigator.pop(context);
-            // Navigator.pop(context);
-            // context.read<TicketProvider>().setConfirmationPage(false);
-          },
+    return LoaderOverlay(
+      overlayWidgetBuilder: (progress) {
+        return spinkit;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          iconTheme: const IconThemeData(color: Colors.white),
+          backgroundColor: Color.fromARGB(255, 39, 54, 211),
+          title: Text('Beli Tiket', style: TextStyle(color: Colors.white)),
+          titleSpacing: 0,
+          titleTextStyle: TextStyle(fontSize: 18, color: Colors.black),
+          leading: BackButton(
+            onPressed: () {
+              Navigator.pop(context);
+              // Navigator.pop(context);
+              // context.read<TicketProvider>().setConfirmationPage(false);
+            },
+          ),
         ),
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(
-                height: 500,
-                child: Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                    Container(
-                      padding: EdgeInsets.all(16),
-                      height: 300,
-                      width: deviceWidth,
-                      decoration: BoxDecoration(
-                        color: Color.fromARGB(255, 39, 54, 211),
-                        borderRadius: BorderRadius.vertical(
-                          bottom: Radius.circular(18),
+        body: SafeArea(
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  height: 500,
+                  child: Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      Container(
+                        padding: EdgeInsets.all(16),
+                        height: 300,
+                        width: deviceWidth,
+                        decoration: BoxDecoration(
+                          color: Color.fromARGB(255, 39, 54, 211),
+                          borderRadius: BorderRadius.vertical(
+                            bottom: Radius.circular(18),
+                          ),
                         ),
                       ),
-                    ),
-                    Positioned(
-                      top: 100,
-                      left: 20,
-                      right: 20,
-                      child: Align(
-                        alignment: Alignment.center,
-                        child: Container(
-                          padding: EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(8),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.7),
-                                blurRadius: 5,
-                                blurStyle: BlurStyle.normal,
-                              ),
-                            ],
-                          ),
-                          width: 300,
-                          height: 400,
-                          child: Form(
-                            key: formKey,
-                            child: DefaultTabController(
-                              length: tabs.length,
-                              child: Column(
-                                children: [
-                                  TabBar(
-                                    tabs: tabs,
-                                    isScrollable:
-                                        false, // penting biar seperti Google UI
-                                    labelColor: Colors.black,
-                                    unselectedLabelColor: Colors.grey,
-                                    indicatorColor: Colors.blue,
-                                    indicatorWeight: 3,
-                                  ),
-                                  Expanded(
-                                    child: TabBarView(
-                                      physics: NeverScrollableScrollPhysics(),
-                                      children: [
-                                        FormWidget(
-                                          ticketProvider: ticketProvider,
-                                          nameController: nameController,
-                                          dateController: dateController,
-                                          formKey: formKey,
-                                          setFormFilled: setFormFilled,
-                                        ),
-                                        _isFormFilled
-                                            ? ConfirmationPage(
-                                              nameController: nameController,
-                                              ticketProvider: ticketProvider,
-                                            )
-                                            : SizedBox(),
-                                      ],
+                      Positioned(
+                        top: 100,
+                        left: 20,
+                        right: 20,
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: Container(
+                            padding: EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(8),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.7),
+                                  blurRadius: 5,
+                                  blurStyle: BlurStyle.normal,
+                                ),
+                              ],
+                            ),
+                            width: 300,
+                            height: 400,
+                            child: Form(
+                              key: formKey,
+                              child: DefaultTabController(
+                                length: tabs.length,
+                                child: Column(
+                                  children: [
+                                    TabBar(
+                                      tabs: tabs,
+                                      isScrollable:
+                                          false, // penting biar seperti Google UI
+                                      labelColor: Colors.black,
+                                      unselectedLabelColor: Colors.grey,
+                                      indicatorColor: Colors.blue,
+                                      indicatorWeight: 3,
                                     ),
-                                  ),
-                                ],
+                                    Expanded(
+                                      child: TabBarView(
+                                        physics: NeverScrollableScrollPhysics(),
+                                        children: [
+                                          FormWidget(
+                                            ticketProvider: ticketProvider,
+                                            nameController: nameController,
+                                            dateController: dateController,
+                                            formKey: formKey,
+                                            setFormFilled: setFormFilled,
+                                          ),
+                                          _isFormFilled
+                                              ? ConfirmationPage(
+                                                nameController: nameController,
+                                                ticketProvider: ticketProvider,
+                                              )
+                                              : SizedBox(),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -148,7 +162,10 @@ class ConfirmationPage extends StatelessWidget {
     required this.ticketProvider,
   });
 
-  void _showModernBottomSheet(BuildContext context) {
+  void _showModernBottomSheet(
+    BuildContext context, {
+    required OrderModel order,
+  }) {
     showModalBottomSheet(
       context: context,
       isScrollControlled:
@@ -192,31 +209,31 @@ class ConfirmationPage extends StatelessWidget {
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 14),
-                const Text(
-                  "Nomor Pesanan : ID.OT.PP0.20.06.26",
+                Text(
+                  "Nomor Order : ${order.orderId}",
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
                 ),
                 const SizedBox(height: 14),
-                Image.asset(
-                  'assets/images/qris.png',
-                  width: 200,
-                  fit: BoxFit.cover,
+                QrImageView(
+                  data: order.paymentNumber,
+                  errorCorrectionLevel: QrErrorCorrectLevel.M,
+                  size: 180,
                 ),
                 const SizedBox(height: 24),
                 _paymentDetails(
                   icon: Icons.shopping_bag_outlined,
                   title: 'Items',
-                  body: 'Ticket x2',
+                  body: 'Ticket wisata x${order.quantity}',
                 ),
                 _paymentDetails(
                   icon: Icons.payment_outlined,
-                  title: 'Metode Pembayaran',
-                  body: 'QRIS',
+                  title: 'Subtotal',
+                  body: 'Rp. ${order.total} + ${order.fee} (fee)',
                 ),
                 _paymentDetails(
                   icon: Icons.money,
                   title: 'Total Pembayaran',
-                  body: 'Rp. 150.000',
+                  body: 'Rp. ${order.totalPayment}',
                 ),
                 const SizedBox(height: 24),
 
@@ -314,8 +331,28 @@ class ConfirmationPage extends StatelessWidget {
                   Color.fromARGB(255, 39, 54, 211),
                 ),
               ),
-              onPressed: () {
-                _showModernBottomSheet(context);
+              onPressed: () async {
+                context.loaderOverlay.show();
+
+                final UserModel? user =
+                    context.read<AuthProvider>().currentUser;
+                final OrderModel order = await context
+                    .read<OrderProvider>()
+                    .placeOrder(
+                      customerName: nameController.text,
+                      customerPhone: user?.phone,
+                      quantity: ticketProvider.ticketQty,
+                      visitDate: ticketProvider.selectedDate!.toString(),
+                    );
+                if (context.mounted) {
+                  if (context.loaderOverlay.visible) {
+                    context.loaderOverlay.hide();
+                  }
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(SnackBar(content: Text(order.message)));
+                  _showModernBottomSheet(context, order: order);
+                }
               },
               child: Text('Pay', style: TextStyle(color: Colors.white)),
             ),

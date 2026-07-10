@@ -7,8 +7,10 @@ import 'package:ticket_kcc/features/account/pages/account_page.dart';
 import 'package:ticket_kcc/features/auth/pages/login_page.dart';
 import 'package:ticket_kcc/features/home/pages/home_page.dart';
 import 'package:ticket_kcc/features/order_history/pages/order_history_pages.dart';
+import 'package:ticket_kcc/features/ticket/pages/ticket_page.dart';
 import 'package:ticket_kcc/providers/auth_provider.dart';
 import 'package:ticket_kcc/providers/navigation_provider.dart';
+import 'package:ticket_kcc/providers/order_provider.dart';
 import 'package:ticket_kcc/providers/ticket_provider.dart';
 
 void main() {
@@ -18,6 +20,7 @@ void main() {
         ChangeNotifierProvider(create: (_) => TicketProvider()),
         ChangeNotifierProvider(create: (_) => NavigationProvider()),
         ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => OrderProvider()),
       ],
       child: const MyApp(),
     ),

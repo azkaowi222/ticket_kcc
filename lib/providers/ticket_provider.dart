@@ -3,12 +3,13 @@ import 'package:flutter/material.dart';
 class TicketProvider extends ChangeNotifier {
   String dayName = '';
   DateTime? selectedDate;
-  int ticketQty = 1;
+  int _ticketQty = 1;
   bool _isConfirmationPage = false;
   int _ticketPrice = 50000;
 
   bool get isConfirmationPage => _isConfirmationPage;
   int get ticketPrice => _ticketPrice;
+  int get ticketQty => _ticketQty;
 
   set setDate(date) {
     selectedDate = date;
@@ -16,7 +17,7 @@ class TicketProvider extends ChangeNotifier {
   }
 
   set setTicketQty(int ticket) {
-    ticketQty = ticket;
+    _ticketQty = ticket;
   }
 
   Future<void> pickDate(BuildContext context) async {
@@ -40,13 +41,13 @@ class TicketProvider extends ChangeNotifier {
   }
 
   void ticketIncrement() {
-    ticketQty++;
+    _ticketQty++;
     notifyListeners();
   }
 
   void ticketDecrement() {
-    if (ticketQty == 1) return;
-    ticketQty--;
+    if (_ticketQty == 1) return;
+    _ticketQty--;
     notifyListeners();
   }
 

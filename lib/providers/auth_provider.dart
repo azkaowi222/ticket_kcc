@@ -45,6 +45,7 @@ class AuthProvider extends ChangeNotifier {
     } finally {
       notifyListeners();
     }
+    return null;
   }
 
   void setUserGuest() {
