@@ -6,8 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:ticket_kcc/features/account/pages/account_page.dart';
 import 'package:ticket_kcc/features/auth/pages/login_page.dart';
 import 'package:ticket_kcc/features/home/pages/home_page.dart';
-import 'package:ticket_kcc/features/order_history/pages/order_history_pages.dart';
-import 'package:ticket_kcc/features/ticket/pages/ticket_page.dart';
+import 'package:ticket_kcc/features/order/order_history/order_history_pages.dart';
 import 'package:ticket_kcc/providers/auth_provider.dart';
 import 'package:ticket_kcc/providers/navigation_provider.dart';
 import 'package:ticket_kcc/providers/order_provider.dart';
@@ -79,6 +78,25 @@ class _MainPageState extends State<MainPage> {
           return spinkit;
         },
         child: Scaffold(
+          floatingActionButton:
+              nav.currentIndex == 1
+                  ? FloatingActionButton(
+                    // mini: true,
+                    backgroundColor: Colors.white,
+
+                    child: Icon(Icons.refresh_outlined),
+                    onPressed: () async {
+                      await context.read<OrderProvider>().getOrderHistory();
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Riwayat berhasil diperbaharui'),
+                          ),
+                        );
+                      }
+                    },
+                  )
+                  : null,
           resizeToAvoidBottomInset: true,
           bottomNavigationBar:
               context.watch<AuthProvider>().isLogin
@@ -99,6 +117,7 @@ class _MainPageState extends State<MainPage> {
               nav.currentIndex == 0
                   ? AppBar(
                     automaticallyImplyLeading: false,
+
                     backgroundColor:
                         context.watch<AuthProvider>().isLogin
                             ? Color.fromARGB(255, 39, 54, 211)

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ticket_kcc/features/ticket/pages/ticket_page.dart';
-import 'package:ticket_kcc/providers/navigation_provider.dart';
 import 'package:ticket_kcc/providers/ticket_provider.dart';
 
 class HomePage extends StatefulWidget {

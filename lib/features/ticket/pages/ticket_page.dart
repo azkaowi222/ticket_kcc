@@ -52,8 +52,6 @@ class _TicketPageState extends State<TicketPage> {
           leading: BackButton(
             onPressed: () {
               Navigator.pop(context);
-              // Navigator.pop(context);
-              // context.read<TicketProvider>().setConfirmationPage(false);
             },
           ),
         ),
@@ -164,7 +162,7 @@ class ConfirmationPage extends StatelessWidget {
 
   void _showModernBottomSheet(
     BuildContext context, {
-    required OrderModel order,
+    required OrderModel? order,
   }) {
     showModalBottomSheet(
       context: context,
@@ -181,96 +179,110 @@ class ConfirmationPage extends StatelessWidget {
           padding: EdgeInsets.only(
             bottom: MediaQuery.of(context).viewInsets.bottom,
           ),
-          child: Container(
-            padding: const EdgeInsets.all(24),
+          child:
+              order != null
+                  ? Container(
+                    padding: const EdgeInsets.all(24),
 
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
-              color: Colors.white,
-            ),
-            child: Column(
-              mainAxisSize:
-                  MainAxisSize
-                      .min, // Container akan menyesuaikan tinggi konten di dalamnya
-              children: [
-                // --- Drag Handle (Indikator garis kecil di bagian atas) ---
-                Container(
-                  width: 50,
-                  height: 5,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[300],
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                const SizedBox(height: 24), // Jarak antara handle dan judul
-                // --- Judul Konten ---
-                const Text(
-                  "Payment via QRIS",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 14),
-                Text(
-                  "Nomor Order : ${order.orderId}",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
-                ),
-                const SizedBox(height: 14),
-                QrImageView(
-                  data: order.paymentNumber,
-                  errorCorrectionLevel: QrErrorCorrectLevel.M,
-                  size: 180,
-                ),
-                const SizedBox(height: 24),
-                _paymentDetails(
-                  icon: Icons.shopping_bag_outlined,
-                  title: 'Items',
-                  body: 'Ticket wisata x${order.quantity}',
-                ),
-                _paymentDetails(
-                  icon: Icons.payment_outlined,
-                  title: 'Subtotal',
-                  body: 'Rp. ${order.total} + ${order.fee} (fee)',
-                ),
-                _paymentDetails(
-                  icon: Icons.money,
-                  title: 'Total Pembayaran',
-                  body: 'Rp. ${order.totalPayment}',
-                ),
-                const SizedBox(height: 24),
-
-                // --- Tombol Aksi ---
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      final nav = Provider.of<NavigationProvider>(
-                        context,
-                        listen: false,
-                      );
-
-                      Navigator.pop(context);
-                      Navigator.pop(
-                        context,
-                      ); // Perintah untuk menutup Bottom Sheet
-                      nav.goToHistory();
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blueAccent,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(
-                          12,
-                        ), // Tombol juga dibuat melengkung
-                      ),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
+                      color: Colors.white,
                     ),
-                    child: const Text(
-                      "Konfirmasi Pembayaran",
-                      style: TextStyle(fontSize: 16, color: Colors.white),
+                    child: Column(
+                      mainAxisSize:
+                          MainAxisSize
+                              .min, // Container akan menyesuaikan tinggi konten di dalamnya
+                      children: [
+                        // --- Drag Handle (Indikator garis kecil di bagian atas) ---
+                        Container(
+                          width: 50,
+                          height: 5,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[300],
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 24,
+                        ), // Jarak antara handle dan judul
+                        // --- Judul Konten ---
+                        const Text(
+                          "Payment via QRIS",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 14),
+                        Text(
+                          "Nomor Order : ${order.orderId}",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.normal,
+                          ),
+                        ),
+                        const SizedBox(height: 14),
+                        QrImageView(
+                          data: order.paymentNumber,
+                          errorCorrectionLevel: QrErrorCorrectLevel.M,
+                          size: 180,
+                        ),
+                        const SizedBox(height: 24),
+                        _paymentDetails(
+                          icon: Icons.shopping_bag_outlined,
+                          title: 'Items',
+                          body: 'Ticket wisata x${order.quantity}',
+                        ),
+                        _paymentDetails(
+                          icon: Icons.payment_outlined,
+                          title: 'Subtotal',
+                          body: 'Rp. ${order.total} + ${order.fee} (fee)',
+                        ),
+                        _paymentDetails(
+                          icon: Icons.money,
+                          title: 'Total Pembayaran',
+                          body: 'Rp. ${order.totalPayment}',
+                        ),
+                        const SizedBox(height: 24),
+
+                        // --- Tombol Aksi ---
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              final nav = Provider.of<NavigationProvider>(
+                                context,
+                                listen: false,
+                              );
+
+                              Navigator.pop(context);
+                              Navigator.pop(
+                                context,
+                              ); // Perintah untuk menutup Bottom Sheet
+                              nav.goToHistory();
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.blueAccent,
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                  12,
+                                ), // Tombol juga dibuat melengkung
+                              ),
+                            ),
+                            child: const Text(
+                              "Konfirmasi Pembayaran",
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                ),
-              ],
-            ),
-          ),
+                  )
+                  : Center(child: CircularProgressIndicator()),
         );
       },
     );
@@ -336,22 +348,22 @@ class ConfirmationPage extends StatelessWidget {
 
                 final UserModel? user =
                     context.read<AuthProvider>().currentUser;
-                final OrderModel order = await context
-                    .read<OrderProvider>()
-                    .placeOrder(
-                      customerName: nameController.text,
-                      customerPhone: user?.phone,
-                      quantity: ticketProvider.ticketQty,
-                      visitDate: ticketProvider.selectedDate!.toString(),
-                    );
+                final OrderProvider orderProvider =
+                    context.read<OrderProvider>();
+                await orderProvider.placeOrder(
+                  customerName: nameController.text,
+                  customerPhone: user?.phone,
+                  quantity: ticketProvider.ticketQty,
+                  visitDate: ticketProvider.selectedDate!.toString(),
+                );
                 if (context.mounted) {
                   if (context.loaderOverlay.visible) {
                     context.loaderOverlay.hide();
                   }
-                  ScaffoldMessenger.of(
-                    context,
-                  ).showSnackBar(SnackBar(content: Text(order.message)));
-                  _showModernBottomSheet(context, order: order);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(orderProvider.order!.message)),
+                  );
+                  _showModernBottomSheet(context, order: orderProvider.order);
                 }
               },
               child: Text('Pay', style: TextStyle(color: Colors.white)),
