@@ -13,6 +13,7 @@ import 'package:ticket_kcc/providers/auth_provider.dart';
 import 'package:ticket_kcc/providers/navigation_provider.dart';
 import 'package:ticket_kcc/providers/order_provider.dart';
 import 'package:ticket_kcc/providers/ticket_provider.dart';
+import 'package:ticket_kcc/providers/user_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,6 +25,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => NavigationProvider()),
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => OrderProvider()),
+        ChangeNotifierProvider(create: (_) => UserProvider()),
       ],
       child: const MyApp(),
     ),

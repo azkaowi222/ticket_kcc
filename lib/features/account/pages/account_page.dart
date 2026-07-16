@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:provider/provider.dart';
 import 'package:ticket_kcc/providers/auth_provider.dart';
 import 'package:ticket_kcc/providers/navigation_provider.dart';
 import 'package:ticket_kcc/providers/order_provider.dart';
+import 'package:ticket_kcc/providers/user_provider.dart';
 
 class AccountPage extends StatefulWidget {
   const AccountPage({super.key});
@@ -14,15 +14,42 @@ class AccountPage extends StatefulWidget {
 }
 
 class _AccountPageState extends State<AccountPage> {
-  final storage = const FlutterSecureStorage();
+  late final UserProvider _userProvider;
+  bool _initialLoading = true;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _userProvider = context.read<UserProvider>();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      context.loaderOverlay.show();
+      try {
+        await _userProvider.getProfile();
+      } catch (e, stack) {
+        debugPrint('$e, $stack');
+      } finally {
+        if (mounted && context.loaderOverlay.visible) {
+          context.loaderOverlay.hide();
+          setState(() {
+            _initialLoading = false;
+          });
+        }
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final user = context.watch<AuthProvider>().currentUser;
     final deviceHeight = MediaQuery.of(context).size.height;
     final deviceWidth = MediaQuery.of(context).size.width;
-    return user?.email == null
-        ? Center(child: CircularProgressIndicator())
+
+    if (_initialLoading) {
+      return const SizedBox.shrink();
+    }
+    return _userProvider.user == null && _userProvider.isLoading
+        ? SizedBox.shrink()
         : Stack(
           clipBehavior: Clip.none,
           children: [

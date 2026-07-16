@@ -14,6 +14,7 @@ class OrderHistoryPages extends StatefulWidget {
 }
 
 class _OrderHistoryPagesState extends State<OrderHistoryPages> {
+  bool _initialLoading = true;
   @override
   void initState() {
     super.initState();
@@ -24,13 +25,14 @@ class _OrderHistoryPagesState extends State<OrderHistoryPages> {
       try {
         final String? customerName = context.read<AuthProvider>().customerName;
         if (context.read<AuthProvider>().currentUser?.username != 'guest') {
-          print('user bukan guest');
           await context.read<OrderProvider>().getOrderHistory(customerName);
         }
-        print('user guest asli');
       } finally {
         if (mounted && context.loaderOverlay.visible) {
           context.loaderOverlay.hide();
+          setState(() {
+            _initialLoading = false;
+          });
         }
       }
     });
@@ -43,10 +45,10 @@ class _OrderHistoryPagesState extends State<OrderHistoryPages> {
     final bool isGuest =
         context.watch<AuthProvider>().currentUser?.username == 'guest';
     final OrderProvider _orderProvider = context.watch<OrderProvider>();
-    print(
-      'isguest: $isGuest, orderHistories: ${orderHistories.length} historguest: ${_orderProvider.guestOrderHistory.length}',
-    );
 
+    if (_initialLoading) {
+      return SizedBox.shrink();
+    }
     return Padding(
       padding: EdgeInsets.all(8),
       child:
