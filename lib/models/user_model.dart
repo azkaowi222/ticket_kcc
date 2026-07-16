@@ -4,12 +4,14 @@ class UserModel {
   final String email;
   final String username;
   final String? phone;
+  final String role;
   const UserModel({
     required this.id,
     this.token,
     this.phone,
     required this.email,
     required this.username,
+    required this.role,
   });
 
   factory UserModel.fromLoginJson(Map<String, dynamic> json) {
@@ -19,6 +21,7 @@ class UserModel {
       email: json['user']['email'],
       username: json['user']['username'],
       phone: json['user']['phone'] ?? '-',
+      role: json['user']['role'],
     );
   }
 }

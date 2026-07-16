@@ -34,17 +34,19 @@ class OrderService {
         throw Exception(errorMessage);
       }
       final OrderModel orderModel = OrderModel.fromJson(data);
+      await StorageService.saveOrderId(orderModel.orderId);
       return orderModel;
-    } catch (e, stack) {
-      throw Exception('Error exception $e, $stack');
+    } catch (e) {
+      throw Exception(e);
     }
   }
 
   Future<List<OrderHistoryModel>> orderHistory() async {
     try {
       final token = await StorageService.getToken();
+
       final response = await http.get(
-        Uri.parse('${ApiService.baseUrl}/orders/history'),
+        Uri.parse('${ApiService.baseUrl}/orders'),
         headers: {'Authorization': 'Bearer $token'},
       );
       final data = jsonDecode(response.body);
@@ -64,6 +66,23 @@ class OrderService {
     } catch (e, stack) {
       print('Error exception $e, $stack');
       throw Exception('Error exception $e, $stack');
+    }
+  }
+
+  Future<OrderHistoryModel> orderHistoryDetail(String orderId) async {
+    try {
+      final token = await StorageService.getToken();
+      final response = await http.get(
+        Uri.parse('${ApiService.baseUrl}/orders/$orderId'),
+        headers: {'Authorization': 'Bearer $token'},
+      );
+      final data = jsonDecode(response.body);
+      final OrderHistoryModel orderHistoryModel = OrderHistoryModel.fromJson(
+        data['data'],
+      );
+      return orderHistoryModel;
+    } catch (e) {
+      rethrow;
     }
   }
 }

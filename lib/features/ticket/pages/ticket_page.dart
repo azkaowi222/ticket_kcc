@@ -350,20 +350,29 @@ class ConfirmationPage extends StatelessWidget {
                     context.read<AuthProvider>().currentUser;
                 final OrderProvider orderProvider =
                     context.read<OrderProvider>();
+
                 await orderProvider.placeOrder(
                   customerName: nameController.text,
                   customerPhone: user?.phone,
                   quantity: ticketProvider.ticketQty,
                   visitDate: ticketProvider.selectedDate!.toString(),
+                  isGuest: user?.username == 'guest',
                 );
+
+                context.read<AuthProvider>().setCustomerName =
+                    nameController.text;
+
                 if (context.mounted) {
                   if (context.loaderOverlay.visible) {
                     context.loaderOverlay.hide();
                   }
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(orderProvider.order!.message)),
+                    SnackBar(content: Text(orderProvider.orderModel!.message)),
                   );
-                  _showModernBottomSheet(context, order: orderProvider.order);
+                  _showModernBottomSheet(
+                    context,
+                    order: orderProvider.orderModel,
+                  );
                 }
               },
               child: Text('Pay', style: TextStyle(color: Colors.white)),

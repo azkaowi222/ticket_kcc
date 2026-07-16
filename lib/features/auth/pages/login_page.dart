@@ -238,6 +238,7 @@ class _LoginPageState extends State<LoginPage> {
             GestureDetector(
               onTap: () {
                 context.read<AuthProvider>().setUserGuest();
+                context.read<AuthProvider>().clearCustomer();
               },
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,

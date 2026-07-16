@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:ticket_kcc/features/ticket/pages/ticket_page.dart';
+import 'package:ticket_kcc/providers/auth_provider.dart';
 import 'package:ticket_kcc/providers/ticket_provider.dart';
 
 class HomePage extends StatefulWidget {
@@ -13,7 +15,9 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
+    final user = context.watch<AuthProvider>().currentUser;
     final double deviceWidth = MediaQuery.of(context).size.width;
+
     return Column(
       children: [
         Stack(
@@ -33,9 +37,18 @@ class _HomePageState extends State<HomePage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  textRegularBold('Good Morning, John', 20),
+                  textRegularBold(
+                    'Selamat Datang, ${user?.username.toUpperCase()}',
+                    20,
+                  ),
                   SizedBox(height: 10),
-                  textRegular("Friday, 26 August", 13),
+                  textRegular(
+                    DateFormat(
+                      'EEEE, d MMMM yyyy',
+                      'id_ID',
+                    ).format(DateTime.now()),
+                    13,
+                  ),
                 ],
               ),
             ),

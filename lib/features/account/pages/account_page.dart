@@ -4,6 +4,7 @@ import 'package:loader_overlay/loader_overlay.dart';
 import 'package:provider/provider.dart';
 import 'package:ticket_kcc/providers/auth_provider.dart';
 import 'package:ticket_kcc/providers/navigation_provider.dart';
+import 'package:ticket_kcc/providers/order_provider.dart';
 
 class AccountPage extends StatefulWidget {
   const AccountPage({super.key});
@@ -110,7 +111,7 @@ class _AccountPageState extends State<AccountPage> {
                           ),
                           prefixIconConstraints: BoxConstraints(minWidth: 40),
                           suffixIconConstraints: BoxConstraints(minWidth: 40),
-                          hintText: user!.phone!.isNotEmpty ? user.phone : '-',
+                          hintText: user?.phone ?? '-',
                         ),
                       ),
                       SizedBox(height: 20),
@@ -129,6 +130,10 @@ class _AccountPageState extends State<AccountPage> {
                             print('logot di klik');
                             context.loaderOverlay.show();
                             context.read<NavigationProvider>().goToHome();
+                            context
+                                .read<OrderProvider>()
+                                .guestOrderHistory
+                                .clear();
                             await context.read<AuthProvider>().processLogout();
                             if (context.mounted) {
                               if (context.loaderOverlay.visible) {

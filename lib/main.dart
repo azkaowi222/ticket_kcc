@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:provider/provider.dart';
 import 'package:ticket_kcc/features/account/pages/account_page.dart';
+import 'package:ticket_kcc/features/admin/pages/admin_pages.dart';
 import 'package:ticket_kcc/features/auth/pages/login_page.dart';
 import 'package:ticket_kcc/features/home/pages/home_page.dart';
 import 'package:ticket_kcc/features/order/order_history/order_history_pages.dart';
@@ -12,7 +14,9 @@ import 'package:ticket_kcc/providers/navigation_provider.dart';
 import 'package:ticket_kcc/providers/order_provider.dart';
 import 'package:ticket_kcc/providers/ticket_provider.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await initializeDateFormatting('id_ID');
   runApp(
     MultiProvider(
       providers: [
@@ -74,7 +78,7 @@ class _MainPageState extends State<MainPage> {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.dark,
       child: LoaderOverlay(
-        overlayWidgetBuilder: (progress) {
+        overlayWidgetBuilder: (_) {
           return spinkit;
         },
         child: Scaffold(
@@ -86,7 +90,13 @@ class _MainPageState extends State<MainPage> {
 
                     child: Icon(Icons.refresh_outlined),
                     onPressed: () async {
-                      await context.read<OrderProvider>().getOrderHistory();
+                      final String? customerName =
+                          context.read<AuthProvider>().customerName;
+                      await context.read<OrderProvider>().getOrderHistory(
+                        customerName,
+                        context.read<AuthProvider>().currentUser?.username ==
+                            'guest',
+                      );
                       if (context.mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
@@ -99,7 +109,8 @@ class _MainPageState extends State<MainPage> {
                   : null,
           resizeToAvoidBottomInset: true,
           bottomNavigationBar:
-              context.watch<AuthProvider>().isLogin
+              context.watch<AuthProvider>().isLogin &&
+                      !context.watch<AuthProvider>().isAdmin
                   ? BottomNavigationBar(
                     elevation: 0,
                     backgroundColor: Colors.transparent,
@@ -114,10 +125,9 @@ class _MainPageState extends State<MainPage> {
                   )
                   : null,
           appBar:
-              nav.currentIndex == 0
+              nav.currentIndex == 0 && !context.watch<AuthProvider>().isAdmin
                   ? AppBar(
                     automaticallyImplyLeading: false,
-
                     backgroundColor:
                         context.watch<AuthProvider>().isLogin
                             ? Color.fromARGB(255, 39, 54, 211)
@@ -135,8 +145,12 @@ class _MainPageState extends State<MainPage> {
                   : null,
           body: SafeArea(
             child:
-                context.watch<AuthProvider>().isLogin
+                context.watch<AuthProvider>().isLogin &&
+                        !context.watch<AuthProvider>().isAdmin
                     ? pages[nav.currentIndex]
+                    : context.watch<AuthProvider>().isLogin &&
+                        context.watch<AuthProvider>().isAdmin
+                    ? const AdminPages()
                     : const LoginPage(),
           ),
         ),

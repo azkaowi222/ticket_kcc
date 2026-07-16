@@ -2,16 +2,29 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:ticket_kcc/models/user_model.dart';
 import 'package:ticket_kcc/services/auth_service.dart';
+import 'package:ticket_kcc/services/storage_service.dart';
 
 class AuthProvider extends ChangeNotifier {
   final storage = const FlutterSecureStorage();
   final AuthService _service = AuthService();
   String? _errorMsg;
   UserModel? _currentUser;
+  String? _customerName;
 
   String? get errorMsg => _errorMsg;
   UserModel? get currentUser => _currentUser;
   bool get isLogin => _currentUser != null;
+  String? get customerName => _customerName;
+  bool get isAdmin => _currentUser?.role == 'admin';
+
+  set setCustomerName(String name) {
+    _customerName = name;
+  }
+
+  void clearCustomer() {
+    StorageService.deleteOrderId();
+    _customerName = null;
+  }
 
   Future<bool> fetchLogin(String email, String password) async {
     try {
@@ -53,6 +66,7 @@ class AuthProvider extends ChangeNotifier {
       id: '001',
       email: 'guest@gmail.com',
       username: 'guest',
+      role: 'user',
     );
     _currentUser = user;
     notifyListeners();
