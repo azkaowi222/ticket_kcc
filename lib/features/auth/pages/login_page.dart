@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ticket_kcc/features/auth/pages/signup_page.dart';
 import 'package:loader_overlay/loader_overlay.dart';
+import 'package:ticket_kcc/models/user_model.dart';
 import 'package:ticket_kcc/providers/auth_provider.dart';
+import 'package:ticket_kcc/providers/user_provider.dart';
 
 // --- CONSTANT COLORS ---
 const Color kPrimaryColor = Color(0xFF500088); // Warna Ungu Tombol/Header
@@ -130,14 +132,17 @@ class _LoginPageState extends State<LoginPage> {
                   if (formKey.currentState!.validate()) {
                     context.loaderOverlay.show();
 
-                    final bool success = await context
+                    final UserModel? _user = await context
                         .read<AuthProvider>()
                         .fetchLogin(
                           _emailController.text,
                           _passwordController.text,
                         );
+                    if (context.mounted) {
+                      context.read<UserProvider>().setUser(_user);
+                    }
 
-                    if (!success) {
+                    if (_user == null) {
                       if (context.mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(content: Text('Email atau password salah')),
@@ -237,7 +242,7 @@ class _LoginPageState extends State<LoginPage> {
             SizedBox(height: 15),
             GestureDetector(
               onTap: () {
-                context.read<AuthProvider>().setUserGuest();
+                context.read<UserProvider>().setUserGuest();
                 context.read<AuthProvider>().clearCustomer();
               },
               child: Row(

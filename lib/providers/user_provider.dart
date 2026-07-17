@@ -7,14 +7,16 @@ class UserProvider extends ChangeNotifier {
   UserModel? _user;
   bool _isLoading = false;
 
+  bool get isLogin => _user != null;
   UserModel? get user => _user;
   bool get isLoading => _isLoading;
+  bool get isAdmin => _user?.role == 'admin';
 
   Future<void> getProfile() async {
     _isLoading = true;
     _user = null;
 
-    notifyListeners();
+    // notifyListeners();
     try {
       final UserModel _userModel = await _userService.profile();
       _user = _userModel;
@@ -47,5 +49,26 @@ class UserProvider extends ChangeNotifier {
     } catch (e) {
       rethrow;
     }
+  }
+
+  void setUserGuest() {
+    final UserModel user = UserModel(
+      id: '001',
+      email: 'guest@gmail.com',
+      username: 'guest',
+      role: 'user',
+    );
+    _user = user;
+    notifyListeners();
+  }
+
+  void setUser(UserModel? user) {
+    _user = user;
+    notifyListeners();
+  }
+
+  void clearUser() {
+    _user = null;
+    notifyListeners();
   }
 }

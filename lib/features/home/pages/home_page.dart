@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:ticket_kcc/features/ticket/pages/ticket_page.dart';
-import 'package:ticket_kcc/providers/auth_provider.dart';
 import 'package:ticket_kcc/providers/ticket_provider.dart';
+import 'package:ticket_kcc/providers/user_provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -15,9 +15,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
-    final user = context.watch<AuthProvider>().currentUser;
+    final user = context.watch<UserProvider>().user;
     final double deviceWidth = MediaQuery.of(context).size.width;
-
     return Column(
       children: [
         Stack(

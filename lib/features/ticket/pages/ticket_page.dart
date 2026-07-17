@@ -9,6 +9,7 @@ import 'package:ticket_kcc/providers/auth_provider.dart';
 import 'package:ticket_kcc/providers/navigation_provider.dart';
 import 'package:ticket_kcc/providers/order_provider.dart';
 import 'package:ticket_kcc/providers/ticket_provider.dart';
+import 'package:ticket_kcc/providers/user_provider.dart';
 
 class TicketPage extends StatefulWidget {
   const TicketPage({super.key});
@@ -347,7 +348,7 @@ class ConfirmationPage extends StatelessWidget {
                 context.loaderOverlay.show();
 
                 final UserModel? user =
-                    context.read<AuthProvider>().currentUser;
+                    context.read<UserProvider>().user;
                 final OrderProvider orderProvider =
                     context.read<OrderProvider>();
 
@@ -359,8 +360,8 @@ class ConfirmationPage extends StatelessWidget {
                   isGuest: user?.username == 'guest',
                 );
 
-                context.read<AuthProvider>().setCustomerName =
-                    nameController.text;
+                // context.read<AuthProvider>().setCustomerName =
+                //     nameController.text;
 
                 if (context.mounted) {
                   if (context.loaderOverlay.visible) {

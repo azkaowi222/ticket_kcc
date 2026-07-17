@@ -13,7 +13,7 @@ class ScannerPage extends StatefulWidget {
 
 class _ScannerPageState extends State<ScannerPage> {
   bool _hasScanned = false;
-  String? _result;
+
   final ImagePicker _imagePicker = ImagePicker();
   final BarcodeScanner _barcodeScanner = BarcodeScanner();
 
@@ -54,7 +54,6 @@ class _ScannerPageState extends State<ScannerPage> {
             final String? qrText = result.barcodes[0].rawValue;
             _hasScanned = true;
             if (qrText != null) {
-              _result = qrText;
               Navigator.push(
                 context,
                 MaterialPageRoute(

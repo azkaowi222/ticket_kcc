@@ -110,56 +110,74 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
-                        onPressed: () async {
-                          final String _email = _emailController.text;
-                          final String _username = _usernameController.text;
-                          final String _phone = _phoneController.text;
-                          final String _password = _passwordController.text;
-                          if (_formkey.currentState!.validate()) {
-                            context.loaderOverlay.show();
+                        onPressed:
+                            widget.user?.username == 'guest'
+                                ? null
+                                : () async {
+                                  final String _email = _emailController.text;
+                                  final String _username =
+                                      _usernameController.text;
+                                  final String _phone = _phoneController.text;
+                                  final String _password =
+                                      _passwordController.text;
+                                  if (_formkey.currentState!.validate()) {
+                                    context.loaderOverlay.show();
 
-                            try {
-                              await context.read<UserProvider>().editProfile(
-                                email: _email,
-                                username: _username,
-                                phone: _phone,
-                                password: _password,
-                              );
-                              if (context.mounted) {
-                                if (context.loaderOverlay.visible) {
-                                  context.loaderOverlay.hide();
-                                }
-                              }
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text('✅ User berhasil diperbarui'),
-                                ),
-                              );
-                            } catch (e) {
-                              if (context.mounted) {
-                                if (context.loaderOverlay.visible) {
-                                  context.loaderOverlay.hide();
-                                }
-                              }
+                                    try {
+                                      await context
+                                          .read<UserProvider>()
+                                          .editProfile(
+                                            email: _email,
+                                            username: _username,
+                                            phone: _phone,
+                                            password: _password,
+                                          );
+                                      if (context.mounted) {
+                                        if (context.loaderOverlay.visible) {
+                                          context.loaderOverlay.hide();
+                                        }
+                                      }
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                            '✅ User berhasil diperbarui',
+                                          ),
+                                        ),
+                                      );
+                                    } catch (e) {
+                                      if (context.mounted) {
+                                        if (context.loaderOverlay.visible) {
+                                          context.loaderOverlay.hide();
+                                        }
+                                      }
 
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    e.toString().replaceAll('Exception', ''),
-                                  ),
-                                ),
-                              );
-                            } finally {
-                              if (context.mounted &&
-                                  context.loaderOverlay.visible) {
-                                context.loaderOverlay.hide();
-                              }
-                            }
-                          }
-                        },
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                            e.toString().replaceAll(
+                                              'Exception',
+                                              '',
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    } finally {
+                                      if (context.mounted &&
+                                          context.loaderOverlay.visible) {
+                                        context.loaderOverlay.hide();
+                                      }
+                                    }
+                                  }
+                                },
                         style: ButtonStyle(
                           backgroundColor: WidgetStatePropertyAll(
-                            Colors.blue.shade400,
+                            widget.user?.username == 'guest'
+                                ? Colors.grey.shade400
+                                : Colors.blue.shade400,
                           ),
                         ),
                         child: Text(

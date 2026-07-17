@@ -84,10 +84,7 @@ class AuthService {
         throw Exception(message);
       }
 
-      return {
-        'statusCode': response.statusCode,
-        'message': message,
-      };
+      return {'statusCode': response.statusCode, 'message': message};
     } catch (e) {
       throw Exception(e);
     }
@@ -100,7 +97,7 @@ class AuthService {
 
       // 2. Beritahu backend bahwa user ini logout
       await http.post(
-        Uri.parse('${ApiService.baseUrl}/auth/users/logout'),
+        Uri.parse('${ApiService.baseUrl}/auth/logout'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',

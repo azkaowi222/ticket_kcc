@@ -5,6 +5,7 @@ import 'package:ticket_kcc/features/order/order_detail/order_detail.dart';
 import 'package:ticket_kcc/models/order_history_model.dart';
 import 'package:ticket_kcc/providers/auth_provider.dart';
 import 'package:ticket_kcc/providers/order_provider.dart';
+import 'package:ticket_kcc/providers/user_provider.dart';
 
 class OrderHistoryPages extends StatefulWidget {
   const OrderHistoryPages({super.key});
@@ -18,14 +19,11 @@ class _OrderHistoryPagesState extends State<OrderHistoryPages> {
   @override
   void initState() {
     super.initState();
-
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       context.loaderOverlay.show();
-
       try {
-        final String? customerName = context.read<AuthProvider>().customerName;
-        if (context.read<AuthProvider>().currentUser?.username != 'guest') {
-          await context.read<OrderProvider>().getOrderHistory(customerName);
+        if (context.read<UserProvider>().user?.username != 'guest') {
+          await context.read<OrderProvider>().getOrderHistory();
         }
       } finally {
         if (mounted && context.loaderOverlay.visible) {
@@ -43,12 +41,12 @@ class _OrderHistoryPagesState extends State<OrderHistoryPages> {
     final List<OrderHistoryModel> orderHistories =
         context.watch<OrderProvider>().orderHistoryModels;
     final bool isGuest =
-        context.watch<AuthProvider>().currentUser?.username == 'guest';
+        context.watch<UserProvider>().user?.username == 'guest';
     final OrderProvider _orderProvider = context.watch<OrderProvider>();
 
-    if (_initialLoading) {
-      return SizedBox.shrink();
-    }
+    // if (_initialLoading) {
+    //   return SizedBox.shrink();
+    // }
     return Padding(
       padding: EdgeInsets.all(8),
       child:

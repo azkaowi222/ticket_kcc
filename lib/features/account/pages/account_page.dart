@@ -26,6 +26,9 @@ class _AccountPageState extends State<AccountPage> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       context.loaderOverlay.show();
       try {
+        if (_userProvider.user?.username == 'guest') {
+          return;
+        }
         await _userProvider.getProfile();
       } catch (e, stack) {
         debugPrint('$e, $stack');
@@ -48,7 +51,7 @@ class _AccountPageState extends State<AccountPage> {
     if (_initialLoading) {
       return const SizedBox.shrink();
     }
-    print(_userProvider.user?.email);
+
     return _userProvider.user == null && _userProvider.isLoading
         ? SizedBox.shrink()
         : Stack(
@@ -106,7 +109,10 @@ class _AccountPageState extends State<AccountPage> {
                     height: 50,
                     child: CircleAvatar(
                       backgroundColor: Colors.redAccent.withValues(alpha: 0.5),
-                      child: Text('AM'),
+                      child: Text(
+                        _userProvider.user!.username[0] +
+                            _userProvider.user!.username[1],
+                      ),
                     ),
                   ),
                   SizedBox(height: 10),
@@ -181,7 +187,6 @@ class _AccountPageState extends State<AccountPage> {
                             ),
                           ),
                           onPressed: () async {
-                            print('logot di klik');
                             context.loaderOverlay.show();
                             context.read<NavigationProvider>().goToHome();
                             context
@@ -189,6 +194,7 @@ class _AccountPageState extends State<AccountPage> {
                                 .guestOrderHistory
                                 .clear();
                             await context.read<AuthProvider>().processLogout();
+                            context.read<UserProvider>().clearUser();
                             if (context.mounted) {
                               if (context.loaderOverlay.visible) {
                                 context.loaderOverlay.hide();

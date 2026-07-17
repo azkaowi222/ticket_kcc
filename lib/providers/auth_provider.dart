@@ -15,7 +15,6 @@ class AuthProvider extends ChangeNotifier {
   UserModel? get currentUser => _currentUser;
   bool get isLogin => _currentUser != null;
   String? get customerName => _customerName;
-  bool get isAdmin => _currentUser?.role == 'admin';
 
   set setCustomerName(String name) {
     _customerName = name;
@@ -26,14 +25,13 @@ class AuthProvider extends ChangeNotifier {
     _customerName = null;
   }
 
-  Future<bool> fetchLogin(String email, String password) async {
+  Future<UserModel?> fetchLogin(String email, String password) async {
     try {
       final UserModel? user = await _service.login(email, password);
       _currentUser = user;
-      return true;
+      return user;
     } catch (e) {
       _errorMsg = e.toString();
-      return false;
     } finally {
       notifyListeners();
     }
@@ -61,17 +59,6 @@ class AuthProvider extends ChangeNotifier {
     return null;
   }
 
-  void setUserGuest() {
-    final UserModel user = UserModel(
-      id: '001',
-      email: 'guest@gmail.com',
-      username: 'guest',
-      role: 'user',
-    );
-    _currentUser = user;
-    notifyListeners();
-  }
-
   // Future<UserModel?> fetchUser() async {
   //   try {
   //     final UserModel? user = await _service.getUser();
@@ -89,9 +76,6 @@ class AuthProvider extends ChangeNotifier {
     // Panggil service
     await _service.logout();
     print('logout dijalankan...');
-
-    // Kosongkan data user di memori state
-    _currentUser = null;
 
     // Beritahu UI agar kembali ke halaman Login
     notifyListeners();

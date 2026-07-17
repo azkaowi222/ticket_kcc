@@ -92,13 +92,17 @@ class _MainPageState extends State<MainPage> {
 
                     child: Icon(Icons.refresh_outlined),
                     onPressed: () async {
-                      final String? customerName =
-                          context.read<AuthProvider>().customerName;
                       await context.read<OrderProvider>().getOrderHistory(
-                        customerName,
-                        context.read<AuthProvider>().currentUser?.username ==
-                            'guest',
+                        null,
+                        context.read<UserProvider>().user?.username == 'guest',
                       );
+                      // final String? customerName =
+                      //     context.read<AuthProvider>().customerName;
+                      // await context.read<OrderProvider>().getOrderHistory(
+                      //   customerName,
+                      //   context.read<AuthProvider>().currentUser?.username ==
+                      //       'guest',
+                      // );
                       if (context.mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
@@ -111,8 +115,8 @@ class _MainPageState extends State<MainPage> {
                   : null,
           resizeToAvoidBottomInset: true,
           bottomNavigationBar:
-              context.watch<AuthProvider>().isLogin &&
-                      !context.watch<AuthProvider>().isAdmin
+              context.watch<UserProvider>().isLogin &&
+                      !context.watch<UserProvider>().isAdmin
                   ? BottomNavigationBar(
                     elevation: 0,
                     backgroundColor: Colors.transparent,
@@ -127,11 +131,11 @@ class _MainPageState extends State<MainPage> {
                   )
                   : null,
           appBar:
-              nav.currentIndex == 0 && !context.watch<AuthProvider>().isAdmin
+              nav.currentIndex == 0 && !context.watch<UserProvider>().isAdmin
                   ? AppBar(
                     automaticallyImplyLeading: false,
                     backgroundColor:
-                        context.watch<AuthProvider>().isLogin
+                        context.watch<UserProvider>().isLogin
                             ? Color.fromARGB(255, 39, 54, 211)
                             : Colors.white,
                   )
@@ -147,11 +151,11 @@ class _MainPageState extends State<MainPage> {
                   : null,
           body: SafeArea(
             child:
-                context.watch<AuthProvider>().isLogin &&
-                        !context.watch<AuthProvider>().isAdmin
+                context.watch<UserProvider>().isLogin &&
+                        !context.watch<UserProvider>().isAdmin
                     ? pages[nav.currentIndex]
-                    : context.watch<AuthProvider>().isLogin &&
-                        context.watch<AuthProvider>().isAdmin
+                    : context.watch<UserProvider>().isLogin &&
+                        context.watch<UserProvider>().isAdmin
                     ? const AdminPages()
                     : const LoginPage(),
           ),
