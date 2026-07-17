@@ -31,11 +31,9 @@ class AuthService {
         final errorData = jsonDecode(response.body);
         throw Exception(errorData['message'] ?? 'Gagal melakukan login');
       }
-    } catch (e, stacktrace) {
-      print('ada error: ${e.toString()}');
-      print(stacktrace);
+    } catch (e) {
       // Menangkap error jaringan (misal: tidak ada internet atau server mati)
-      throw Exception('Terjadi kesalahan sistem: $e');
+      throw Exception(e);
     }
   }
 

@@ -116,25 +116,42 @@ class _SignUpPageState extends State<SignUpPage> {
                     onPressed: () async {
                       if (formkey.currentState!.validate()) {
                         context.loaderOverlay.show();
-                        final Map<String, dynamic>? data = await context
-                            .read<AuthProvider>()
-                            .fetchRegister(
-                              email: _emailController.text,
-                              password: _passwordController.text,
-                              username: _emailController.text.split('@')[0],
-                              phone: _phoneController.text,
-                            );
-                        if (context.mounted) {
-                          if (data != null) {
+                        try {
+                          final Map<String, dynamic> data = await context
+                              .read<AuthProvider>()
+                              .fetchRegister(
+                                email: _emailController.text,
+                                password: _passwordController.text,
+                                username: _emailController.text.split('@')[0],
+                                phone: _phoneController.text,
+                              );
+                          if (context.mounted) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(content: Text(data['message'])),
                             );
                             if (data['statusCode'] == 201) {
                               Navigator.pop(context);
                             }
+
+                            if (context.loaderOverlay.visible) {
+                              context.loaderOverlay.hide();
+                            }
                           }
-                          if (context.loaderOverlay.visible) {
-                            context.loaderOverlay.hide();
+                        } catch (e) {
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  e.toString().replaceAll('Exception', ''),
+                                ),
+                              ),
+                            );
+                          }
+                        } finally {
+                          if (context.mounted) {
+                            if (context.loaderOverlay.visible) {
+                              context.loaderOverlay.hide();
+                            }
                           }
                         }
                       }

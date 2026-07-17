@@ -37,7 +37,7 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  Future<Map<String, dynamic>?> fetchRegister({
+  Future<Map<String, dynamic>> fetchRegister({
     required String email,
     required String password,
     required String username,
@@ -52,11 +52,10 @@ class AuthProvider extends ChangeNotifier {
       );
       return data;
     } catch (e) {
-      print(e.toString());
+      rethrow;
     } finally {
       notifyListeners();
     }
-    return null;
   }
 
   // Future<UserModel?> fetchUser() async {

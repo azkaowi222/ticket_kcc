@@ -1,3 +1,4 @@
 class ApiService {
-  static const baseUrl = 'https://6fcf-182-2-186-198.ngrok-free.app/api';
+  static const baseUrl =
+      'https://backend-ticket-kcc-h3c4cehsdwh8gna8.indonesiacentral-01.azurewebsites.net/api';
 }
