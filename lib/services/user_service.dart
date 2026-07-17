@@ -23,4 +23,36 @@ class UserService {
       throw Exception('$e, $stack');
     }
   }
+
+  Future<UserModel> updateProfile({
+    required String email,
+    required String username,
+    String? phone,
+    String? password,
+  }) async {
+    try {
+      final token = await StorageService.getToken();
+      final response = await http.patch(
+        Uri.parse('${ApiService.baseUrl}/users/edit'),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'email': email,
+          'username': username,
+          'phone': phone,
+          'password': password,
+        }),
+      );
+      final data = jsonDecode(response.body);
+      if (response.statusCode != 200) {
+        throw Exception(data['message']);
+      }
+      final UserModel _userModel = UserModel.fromLoginJson(data);
+      return _userModel;
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
 }

@@ -10,7 +10,6 @@ class UserProvider extends ChangeNotifier {
   UserModel? get user => _user;
   bool get isLoading => _isLoading;
 
-
   Future<void> getProfile() async {
     _isLoading = true;
     _user = null;
@@ -25,6 +24,28 @@ class UserProvider extends ChangeNotifier {
     } finally {
       _isLoading = false;
       notifyListeners();
+    }
+  }
+
+  Future<void> editProfile({
+    required String email,
+    required String username,
+    String? phone,
+    String? password,
+  }) async {
+    try {
+      if (user != null) {
+        final UserModel _userModel = await _userService.updateProfile(
+          email: email,
+          username: username,
+          phone: phone,
+          password: password,
+        );
+        _user = _userModel;
+        notifyListeners();
+      }
+    } catch (e) {
+      rethrow;
     }
   }
 }

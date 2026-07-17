@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:provider/provider.dart';
+import 'package:ticket_kcc/features/account/pages/account_settings_page.dart';
 import 'package:ticket_kcc/providers/auth_provider.dart';
 import 'package:ticket_kcc/providers/navigation_provider.dart';
 import 'package:ticket_kcc/providers/order_provider.dart';
@@ -41,13 +42,13 @@ class _AccountPageState extends State<AccountPage> {
 
   @override
   Widget build(BuildContext context) {
-    final user = context.watch<AuthProvider>().currentUser;
     final deviceHeight = MediaQuery.of(context).size.height;
     final deviceWidth = MediaQuery.of(context).size.width;
 
     if (_initialLoading) {
       return const SizedBox.shrink();
     }
+    print(_userProvider.user?.email);
     return _userProvider.user == null && _userProvider.isLoading
         ? SizedBox.shrink()
         : Stack(
@@ -69,6 +70,31 @@ class _AccountPageState extends State<AccountPage> {
               ),
             ),
             Positioned(
+              right: 0,
+              child: PopupMenuButton<String>(
+                icon: const Icon(Icons.more_vert_rounded),
+                onSelected: (value) {
+                  if (value == 'settings') {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder:
+                            (_) =>
+                                AccountSettingsPage(user: _userProvider.user),
+                      ),
+                    );
+                  }
+                },
+                itemBuilder:
+                    (context) => [
+                      const PopupMenuItem(
+                        value: 'settings',
+                        child: Text('Pengaturan'),
+                      ),
+                    ],
+              ),
+            ),
+            Positioned(
               top: 100,
               right: 0,
               left: 0,
@@ -87,9 +113,8 @@ class _AccountPageState extends State<AccountPage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(user?.username ?? 'user'),
+                      Text(_userProvider.user?.username ?? 'user'),
                       SizedBox(width: 5),
-                      Icon(Icons.edit, size: 18),
                     ],
                   ),
                 ],
@@ -111,9 +136,10 @@ class _AccountPageState extends State<AccountPage> {
                   child: Column(
                     children: [
                       TextFormField(
+                        readOnly: true,
                         decoration: InputDecoration(
                           prefixIcon: Icon(Icons.email),
-                          suffixIcon: Icon(Icons.edit),
+
                           enabledBorder: UnderlineInputBorder(
                             borderSide: BorderSide(
                               color: Colors.grey.withValues(alpha: 0.3),
@@ -122,14 +148,15 @@ class _AccountPageState extends State<AccountPage> {
                           ),
                           prefixIconConstraints: BoxConstraints(minWidth: 40),
                           suffixIconConstraints: BoxConstraints(minWidth: 40),
-                          hintText: user?.email,
+                          hintText: _userProvider.user?.email,
                         ),
                       ),
                       SizedBox(height: 20),
                       TextFormField(
+                        readOnly: true,
                         decoration: InputDecoration(
                           prefixIcon: Icon(Icons.phone),
-                          suffixIcon: Icon(Icons.edit),
+
                           enabledBorder: UnderlineInputBorder(
                             borderSide: BorderSide(
                               color: Colors.grey.withValues(alpha: 0.3),
@@ -138,7 +165,7 @@ class _AccountPageState extends State<AccountPage> {
                           ),
                           prefixIconConstraints: BoxConstraints(minWidth: 40),
                           suffixIconConstraints: BoxConstraints(minWidth: 40),
-                          hintText: user?.phone ?? '-',
+                          hintText: _userProvider.user?.phone ?? '-',
                         ),
                       ),
                       SizedBox(height: 20),

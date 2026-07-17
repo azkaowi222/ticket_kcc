@@ -1,3 +1,3 @@
 class ApiService {
-  static const baseUrl = 'https://db02-182-6-42-114.ngrok-free.app/api';
+  static const baseUrl = 'https://6fcf-182-2-186-198.ngrok-free.app/api';
 }
