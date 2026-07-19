@@ -215,7 +215,7 @@ class _OrderDetailState extends State<OrderDetail> {
                               _buildPaymentItem(
                                 icon: Icon(Icons.attach_money_outlined),
                                 key: 'Subtotal',
-                                value: 'Rp. ${order.total}',
+                                value: 'Rp. ${order.price * order.quantity}',
                               ),
 
                               Divider(),
@@ -229,7 +229,7 @@ class _OrderDetailState extends State<OrderDetail> {
                               _buildPaymentItem(
                                 icon: Icon(Icons.money_outlined),
                                 key: 'Total',
-                                value: 'Rp. ${order.total + order.fee}',
+                                value: 'Rp. ${order.total}',
                               ),
                             ],
                           ),
