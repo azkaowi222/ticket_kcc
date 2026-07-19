@@ -192,6 +192,20 @@ class _OrderDetailState extends State<OrderDetail> {
                               ),
                               Divider(),
                               _buildPaymentItem(
+                                icon: Icon(Icons.support_agent_rounded),
+                                key: 'Nomor order',
+                                value: order.orderId,
+                              ),
+
+                              Divider(),
+                              _buildPaymentItem(
+                                icon: Icon(Icons.date_range_outlined),
+                                key: 'Waktu kunjungan',
+                                value: order.visitDate.toLocal().toString(),
+                              ),
+
+                              Divider(),
+                              _buildPaymentItem(
                                 icon: Icon(Icons.payment_outlined),
                                 key: 'Payment metode',
                                 value: 'Qris',
