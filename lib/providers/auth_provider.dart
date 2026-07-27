@@ -71,6 +71,15 @@ class AuthProvider extends ChangeNotifier {
   //   }
   // }
 
+  Future<UserModel> processSignInWithGoogle() async {
+    try {
+      final UserModel _newUser = await _service.signInWithGoogle();
+      return _newUser;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<void> processLogout() async {
     // Panggil service
     await _service.logout();

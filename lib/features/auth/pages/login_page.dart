@@ -28,6 +28,23 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _passwordController = TextEditingController();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
+  Future<void> signInWithGoogle() async {
+    context.loaderOverlay.show();
+    try {
+      final UserModel user =
+          await context.read<AuthProvider>().processSignInWithGoogle();
+      context.read<UserProvider>().setUser(user);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString().replaceAll('Exception', ''))),
+      );
+    } finally {
+      if (mounted && context.loaderOverlay.visible) {
+        context.loaderOverlay.hide();
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -128,7 +145,6 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 onPressed: () async {
-                  print('login');
                   if (formKey.currentState!.validate()) {
                     context.loaderOverlay.show();
 
@@ -239,6 +255,33 @@ class _LoginPageState extends State<LoginPage> {
             ),
             SizedBox(height: 15),
             const OrWithDivider(),
+            SizedBox(height: 15),
+            ElevatedButton(
+              style: ButtonStyle(
+                padding: WidgetStatePropertyAll(EdgeInsets.all(14)),
+                backgroundColor: WidgetStatePropertyAll(Colors.white),
+              ),
+              onPressed: signInWithGoogle,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset(
+                    'assets/icon/google_icon.png',
+                    width: 22,
+                    height: 22,
+                  ),
+                  const SizedBox(width: 12),
+                  const Text(
+                    'Login dengan Google',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black,
+                    ),
+                  ),
+                ],
+              ),
+            ),
             SizedBox(height: 15),
             GestureDetector(
               onTap: () {

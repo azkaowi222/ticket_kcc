@@ -9,6 +9,7 @@ class UserService {
   Future<UserModel> profile() async {
     try {
       final token = await StorageService.getToken();
+      print('token from userservice: $token');
       final response = await http.get(
         Uri.parse('${ApiService.baseUrl}/users/profile'),
         headers: {'Authorization': 'Bearer $token'},

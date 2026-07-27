@@ -3,8 +3,11 @@ import 'package:ticket_kcc/models/user_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:ticket_kcc/services/api_service.dart';
 import 'package:ticket_kcc/services/storage_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthService {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   Future<UserModel?> login(String email, String password) async {
     try {
       final response = await http.post(
@@ -37,27 +40,6 @@ class AuthService {
     }
   }
 
-  // Future<UserModel?> getUser() async {
-  //   try {
-  //     final String? jwtToken = await StorageService.getToken();
-  //     final response = await http.get(
-  //       Uri.parse('${ApiService.baseUrl}/users/profile'),
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //         'Authorization': 'Bearer $jwtToken',
-  //       },
-  //     );
-
-  //     final data = jsonDecode(response.body);
-  //     final UserModel user = UserModel.fromJson(data['user']);
-
-  //     return user;
-  //   } catch (e, stacktrace) {
-  //     print('ad error ${e.toString()} di ${stacktrace.toString()}');
-  //     throw Exception(e.toString());
-  //   }
-  // }
-
   Future<Map<String, dynamic>> signup({
     required String email,
     required String password,
@@ -84,7 +66,38 @@ class AuthService {
 
       return {'statusCode': response.statusCode, 'message': message};
     } catch (e) {
-      throw Exception(e);
+      throw Exception(e.toString());
+    }
+  }
+
+  Future<UserModel> signInWithGoogle() async {
+    try {
+      await GoogleSignIn.instance.initialize();
+      final GoogleSignInAccount? _user =
+          await GoogleSignIn.instance.authenticate();
+      if (_user == null) {
+        throw Exception();
+      }
+      final GoogleSignInAuthentication googleAuth = _user.authentication;
+      final credential = GoogleAuthProvider.credential(
+        idToken: googleAuth.idToken,
+      );
+      final _userAuth = await _auth.signInWithCredential(credential);
+      final idToken = await _userAuth.user!.getIdToken();
+      final response = await http.post(
+        Uri.parse('${ApiService.baseUrl}/auth/login/google'),
+        headers: {'Content-Type': "application/json"},
+        body: jsonEncode({'idToken': idToken}),
+      );
+      final data = jsonDecode(response.body);
+      if (response.statusCode != 200) {
+        throw Exception(data['message']);
+      }
+      await StorageService.saveToken(data['token']);
+      final UserModel _userModel = UserModel.fromLoginJson(data);
+      return _userModel;
+    } catch (e) {
+      throw Exception(e.toString());
     }
   }
 

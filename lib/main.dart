@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -9,6 +10,7 @@ import 'package:ticket_kcc/features/admin/pages/admin_pages.dart';
 import 'package:ticket_kcc/features/auth/pages/login_page.dart';
 import 'package:ticket_kcc/features/home/pages/home_page.dart';
 import 'package:ticket_kcc/features/order/order_history/order_history_pages.dart';
+import 'package:ticket_kcc/firebase_options.dart';
 import 'package:ticket_kcc/providers/auth_provider.dart';
 import 'package:ticket_kcc/providers/navigation_provider.dart';
 import 'package:ticket_kcc/providers/order_provider.dart';
@@ -18,6 +20,7 @@ import 'package:ticket_kcc/providers/user_provider.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeDateFormatting('id_ID');
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(
     MultiProvider(
       providers: [
