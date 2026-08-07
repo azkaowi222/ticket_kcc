@@ -3,6 +3,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:provider/provider.dart';
 import 'package:ticket_kcc/features/auth/pages/login_page.dart';
+import 'package:ticket_kcc/features/auth/pages/verify_email_page.dart';
 import 'package:ticket_kcc/models/user_model.dart';
 import 'package:ticket_kcc/providers/auth_provider.dart';
 import 'package:ticket_kcc/providers/user_provider.dart';
@@ -133,6 +134,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
+
                     onPressed: () async {
                       if (formkey.currentState!.validate()) {
                         context.loaderOverlay.show();
@@ -145,13 +147,25 @@ class _SignUpPageState extends State<SignUpPage> {
                                 username: _emailController.text.split('@')[0],
                                 phone: _phoneController.text,
                               );
+
                           if (context.mounted) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(content: Text(data['message'])),
                             );
-                            if (data['statusCode'] == 201) {
-                              Navigator.pop(context);
-                            }
+
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder:
+                                    (_) => VerifyEmailPage(
+                                      email: _emailController.text,
+                                      password: _passwordController.text,
+                                      username:
+                                          _emailController.text.split('@')[0],
+                                      phone: _phoneController.text,
+                                    ),
+                              ),
+                            );
 
                             if (context.loaderOverlay.visible) {
                               context.loaderOverlay.hide();

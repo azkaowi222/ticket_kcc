@@ -88,4 +88,25 @@ class AuthProvider extends ChangeNotifier {
     // Beritahu UI agar kembali ke halaman Login
     notifyListeners();
   }
+
+  Future<bool> processVerifyEmail({
+    required String email,
+    required int otp,
+  }) async {
+    try {
+      final isSuccess = await _service.verifyEmail(email: email, otp: otp);
+      return isSuccess;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<bool> processResendOtp({required String email}) async {
+    try {
+      final isSuccess = await _service.resendOtp(email: email);
+      return isSuccess;
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

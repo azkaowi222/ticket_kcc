@@ -124,4 +124,42 @@ class AuthService {
       await StorageService.deleteToken(); // Pastikan selalu terhapus
     }
   }
+
+  Future<bool> verifyEmail({required String email, required int otp}) async {
+    try {
+      final response = await http.post(
+        Uri.parse('${ApiService.baseUrl}/auth/email/verify'),
+        headers: {'Content-Type': "application/json"},
+        body: jsonEncode({'email': email, 'otp': otp}),
+      );
+
+      final data = jsonDecode(response.body);
+      if (response.statusCode != 200) {
+        final errMessage = data['message'];
+        throw Exception(errMessage as String);
+      }
+      return true;
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
+  Future<bool> resendOtp({required String email}) async {
+    try {
+      final response = await http.patch(
+        Uri.parse('${ApiService.baseUrl}/auth/email/resend'),
+        headers: {'Content-Type': "application/json"},
+        body: jsonEncode({'email': email}),
+      );
+
+      final data = jsonDecode(response.body);
+      if (response.statusCode != 200) {
+        final errMessage = data['message'];
+        throw Exception(errMessage as String);
+      }
+      return true;
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
 }
