@@ -15,7 +15,9 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
+    print('homepage direbuild');
     final user = context.watch<UserProvider>().user;
+    print('user sjkrng: ${user?.email}');
     final double deviceWidth = MediaQuery.of(context).size.width;
     return Column(
       children: [

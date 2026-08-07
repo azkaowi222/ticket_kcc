@@ -190,72 +190,9 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
 
-            const SizedBox(height: 30),
-
-            // --- Divider ---
-            // const OrWithDivider(),
-            // const SizedBox(height: 20),
-
-            // // --- Social Buttons ---
-            // Row(
-            //   children: [
-            //     Expanded(
-            //       child: ElevatedButton.icon(
-            //         onPressed: () {},
-            //         style: ButtonStyle(
-            //           padding: WidgetStatePropertyAll(EdgeInsets.all(20)),
-            //           shape: WidgetStatePropertyAll(
-            //             ContinuousRectangleBorder(
-            //               borderRadius: BorderRadius.all(Radius.circular(20)),
-            //             ),
-            //           ),
-
-            //           backgroundColor: WidgetStatePropertyAll(kPrimaryColor),
-            //         ),
-            //         icon: Icon(Icons.g_mobiledata_sharp, color: Colors.white),
-            //         label: Text(
-            //           'Google',
-
-            //           style: TextStyle(color: Colors.white),
-            //         ),
-            //         iconAlignment: IconAlignment.end,
-            //       ),
-            //     ),
-            //   ],
-            // ),
-
-            // const SizedBox(height: 50),
-
-            // --- Footer ---
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text(
-                  "Don't have an account ? ",
-                  style: TextStyle(color: Colors.grey),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const SignUpPage(),
-                      ),
-                    );
-                  },
-                  child: const Text(
-                    "Sign Up",
-                    style: TextStyle(
-                      color: kPrimaryColor,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ],
-            ),
             SizedBox(height: 15),
             const OrWithDivider(),
-            SizedBox(height: 15),
+
             ElevatedButton(
               style: ButtonStyle(
                 padding: WidgetStatePropertyAll(EdgeInsets.all(14)),
@@ -297,6 +234,35 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ],
               ),
+            ),
+            const SizedBox(height: 30),
+
+            // --- Footer ---
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text(
+                  "Belum Punya Akun ? ",
+                  style: TextStyle(color: Colors.grey),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const SignUpPage(),
+                      ),
+                    );
+                  },
+                  child: const Text(
+                    "Sign Up",
+                    style: TextStyle(
+                      color: kPrimaryColor,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
         ),

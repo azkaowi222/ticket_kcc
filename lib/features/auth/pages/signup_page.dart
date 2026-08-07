@@ -3,7 +3,9 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:provider/provider.dart';
 import 'package:ticket_kcc/features/auth/pages/login_page.dart';
+import 'package:ticket_kcc/models/user_model.dart';
 import 'package:ticket_kcc/providers/auth_provider.dart';
+import 'package:ticket_kcc/providers/user_provider.dart';
 
 // --- CONSTANT COLORS ---
 const Color kPrimaryColor = Color(0xFF500088); // Warna Ungu Tombol/Header
@@ -26,6 +28,24 @@ class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController _phoneController = TextEditingController();
 
   final Widget spinkit = SpinKitThreeInOut(color: Colors.white, size: 25);
+
+  Future<void> signInOrSignUpWithGoogle() async {
+    context.loaderOverlay.show();
+    try {
+      final UserModel user =
+          await context.read<AuthProvider>().processSignInWithGoogle();
+      context.read<UserProvider>().setUser(user);
+      Navigator.pop(context);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString().replaceAll('Exception', ''))),
+      );
+    } finally {
+      if (mounted && context.loaderOverlay.visible) {
+        context.loaderOverlay.hide();
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -166,6 +186,36 @@ class _SignUpPageState extends State<SignUpPage> {
                     ),
                   ),
                 ),
+                const SizedBox(height: 15),
+                const OrWithDivider(),
+                const SizedBox(height: 15),
+
+                ElevatedButton(
+                  style: ButtonStyle(
+                    padding: WidgetStatePropertyAll(EdgeInsets.all(14)),
+                    backgroundColor: WidgetStatePropertyAll(Colors.white),
+                  ),
+                  onPressed: signInOrSignUpWithGoogle,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(
+                        'assets/icon/google_icon.png',
+                        width: 22,
+                        height: 22,
+                      ),
+                      const SizedBox(width: 12),
+                      const Text(
+                        'Daftar dengan Google',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
 
                 const SizedBox(height: 30),
 
@@ -214,6 +264,24 @@ class _SignUpPageState extends State<SignUpPage> {
           ),
         ),
       ),
+    );
+  }
+}
+
+class OrWithDivider extends StatelessWidget {
+  const OrWithDivider({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(child: Divider(color: Colors.grey.shade400)),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Text("Or", style: TextStyle(color: Colors.grey.shade500)),
+        ),
+        Expanded(child: Divider(color: Colors.grey.shade400)),
+      ],
     );
   }
 }

@@ -99,13 +99,7 @@ class _MainPageState extends State<MainPage> {
                         null,
                         context.read<UserProvider>().user?.username == 'guest',
                       );
-                      // final String? customerName =
-                      //     context.read<AuthProvider>().customerName;
-                      // await context.read<OrderProvider>().getOrderHistory(
-                      //   customerName,
-                      //   context.read<AuthProvider>().currentUser?.username ==
-                      //       'guest',
-                      // );
+
                       if (context.mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
