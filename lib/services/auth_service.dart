@@ -162,4 +162,26 @@ class AuthService {
       throw Exception(e.toString());
     }
   }
+
+  Future<bool> updatePassword({
+    required String email,
+    required String password,
+  }) async {
+    try {
+      final response = await http.patch(
+        Uri.parse('${ApiService.baseUrl}/auth/update-password'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'email': email, 'password': password}),
+      );
+      final data = jsonDecode(response.body);
+
+      if (response.statusCode != 200) {
+        final errMessage = data['message'];
+        throw Exception(errMessage as String);
+      }
+      return true;
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
 }

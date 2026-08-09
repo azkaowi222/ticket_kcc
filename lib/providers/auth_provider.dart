@@ -32,6 +32,7 @@ class AuthProvider extends ChangeNotifier {
       return user;
     } catch (e) {
       _errorMsg = e.toString();
+      rethrow;
     } finally {
       notifyListeners();
     }
@@ -104,6 +105,21 @@ class AuthProvider extends ChangeNotifier {
   Future<bool> processResendOtp({required String email}) async {
     try {
       final isSuccess = await _service.resendOtp(email: email);
+      return isSuccess;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<bool> fetchUpdatePassword({
+    required String email,
+    required String password,
+  }) async {
+    try {
+      final isSuccess = await _service.updatePassword(
+        email: email,
+        password: password,
+      );
       return isSuccess;
     } catch (e) {
       rethrow;

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:provider/provider.dart';
+import 'package:ticket_kcc/features/auth/pages/reset_password.dart';
 import 'package:ticket_kcc/providers/auth_provider.dart';
 
 const Color kPrimaryColor = Color(0xFF500088); // Warna Ungu Tombol/Header
@@ -11,16 +12,18 @@ const Color kErrorColor = Color(0xFFFF5252); // Warna Merah Forgot Password
 
 class VerifyEmailPage extends StatefulWidget {
   final String email;
-  final String password;
+  final String? password;
   final String username;
   final String? phone;
+  final bool isFromForgotPass;
 
   const VerifyEmailPage({
     super.key,
     required this.email,
-    required this.password,
+    this.password,
     required this.username,
     this.phone,
+    required this.isFromForgotPass,
   });
 
   @override
@@ -69,8 +72,16 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text('Email berhasil diverifikasi')));
-        Navigator.pop(context);
-        Navigator.pop(context);
+        if (!widget.isFromForgotPass) {
+          Navigator.pop(context);
+          Navigator.pop(context);
+        }
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => ResetPasswordPage(email: widget.email),
+          ),
+        );
       }
     } catch (e) {
       if (mounted) {
@@ -196,12 +207,12 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
 
                         GestureDetector(
                           onTap: () async {
-                            print('Resend OTP');
+                            overlayContext.loaderOverlay.show();
                             try {
                               await context
                                   .read<AuthProvider>()
                                   .processResendOtp(email: widget.email);
-                              ScaffoldMessenger.of(context).showSnackBar(
+                              ScaffoldMessenger.of(overlayContext).showSnackBar(
                                 SnackBar(
                                   content: Text(
                                     'Email berhasil dikirim ulang ke ${widget.email}',
@@ -209,13 +220,18 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
                                 ),
                               );
                             } catch (e) {
-                              ScaffoldMessenger.of(context).showSnackBar(
+                              ScaffoldMessenger.of(overlayContext).showSnackBar(
                                 SnackBar(
                                   content: Text(
                                     e.toString().replaceAll('Exception', ''),
                                   ),
                                 ),
                               );
+                            } finally {
+                              if (overlayContext.mounted &&
+                                  overlayContext.loaderOverlay.visible) {
+                                overlayContext.loaderOverlay.hide();
+                              }
                             }
                           },
                           child: const Text(

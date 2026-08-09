@@ -139,18 +139,20 @@ class _SignUpPageState extends State<SignUpPage> {
                       if (formkey.currentState!.validate()) {
                         context.loaderOverlay.show();
                         try {
-                          final Map<String, dynamic> data = await context
-                              .read<AuthProvider>()
-                              .fetchRegister(
-                                email: _emailController.text,
-                                password: _passwordController.text,
-                                username: _emailController.text.split('@')[0],
-                                phone: _phoneController.text,
-                              );
+                          await context.read<AuthProvider>().fetchRegister(
+                            email: _emailController.text,
+                            password: _passwordController.text,
+                            username: _emailController.text.split('@')[0],
+                            phone: _phoneController.text,
+                          );
 
                           if (context.mounted) {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text(data['message'])),
+                              SnackBar(
+                                content: Text(
+                                  'Kode OTP berhasil dikirim ke: ${_emailController.text}',
+                                ),
+                              ),
                             );
 
                             Navigator.push(
@@ -163,6 +165,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                       username:
                                           _emailController.text.split('@')[0],
                                       phone: _phoneController.text,
+                                      isFromForgotPass: false,
                                     ),
                               ),
                             );

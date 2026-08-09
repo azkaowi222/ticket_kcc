@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:ticket_kcc/features/auth/pages/forgot_password.dart';
 import 'package:ticket_kcc/features/auth/pages/signup_page.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:ticket_kcc/models/user_model.dart';
@@ -121,11 +122,21 @@ class _LoginPageState extends State<LoginPage> {
                   style: TextStyle(fontWeight: FontWeight.w500),
                 ),
                 const Spacer(),
-                const Text(
-                  "Lupa Password",
-                  style: TextStyle(
-                    color: kErrorColor,
-                    fontWeight: FontWeight.w600,
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const ForgotPasswordPage(),
+                      ),
+                    );
+                  },
+                  child: const Text(
+                    "Lupa Password",
+                    style: TextStyle(
+                      color: kErrorColor,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
               ],
@@ -145,29 +156,20 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 onPressed: () async {
-                  if (formKey.currentState!.validate()) {
-                    context.loaderOverlay.show();
+                  try {
+                    if (formKey.currentState!.validate()) {
+                      context.loaderOverlay.show();
 
-                    final UserModel? _user = await context
-                        .read<AuthProvider>()
-                        .fetchLogin(
-                          _emailController.text,
-                          _passwordController.text,
-                        );
-                    if (context.mounted) {
-                      context.read<UserProvider>().setUser(_user);
-                    }
-
-                    if (_user == null) {
+                      final UserModel? _user = await context
+                          .read<AuthProvider>()
+                          .fetchLogin(
+                            _emailController.text,
+                            _passwordController.text,
+                          );
                       if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Email atau password salah')),
-                        );
-                        if (context.loaderOverlay.visible) {
-                          context.loaderOverlay.hide();
-                        }
+                        context.read<UserProvider>().setUser(_user);
                       }
-                    } else {
+
                       if (context.mounted) {
                         if (context.loaderOverlay.visible) {
                           context.loaderOverlay.hide();
@@ -176,6 +178,20 @@ class _LoginPageState extends State<LoginPage> {
                           SnackBar(content: Text("Login berhasil")),
                         );
                       }
+                    }
+                  } catch (e) {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            e.toString().replaceAll('Exception', ''),
+                          ),
+                        ),
+                      );
+                    }
+                  } finally {
+                    if (context.mounted && context.loaderOverlay.visible) {
+                      context.loaderOverlay.hide();
                     }
                   }
                 },
